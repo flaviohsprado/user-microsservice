@@ -1,6 +1,5 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { IsOptionalStringColumn } from './../../commons/decorators/column/isOptionalStringColumn.decorator';
-import { User } from './user.entity';
 
 @Entity()
 export class File {
@@ -8,7 +7,7 @@ export class File {
   public id: string;
 
   @IsOptionalStringColumn()
-  public originalname?: string;
+  public originalName?: string;
 
   @IsOptionalStringColumn()
   public ownerId: string;
@@ -23,8 +22,5 @@ export class File {
   public url: string;
 
   @Column({ type: 'bytea', nullable: true })
-  public buffer?: Uint8Array;
-
-  @OneToMany(() => User, (User) => User.role)
-  public users?: User[];
+  public data?: Uint8Array;
 }

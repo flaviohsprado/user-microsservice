@@ -1,8 +1,4 @@
-import { Role } from './role.entity';
-import { File } from './file.entity';
-import { IsRequiredStringColumn } from './../../commons/decorators/column/isRequiredStringColumn.decorator';
-import { IsOptionalStringColumn } from './../../commons/decorators/column/isOptionalStringColumn.decorator';
-
+import 'dotenv/config';
 import {
   CreateDateColumn,
   Entity,
@@ -12,6 +8,10 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { IsOptionalStringColumn } from './../../commons/decorators/column/isOptionalStringColumn.decorator';
+import { IsRequiredStringColumn } from './../../commons/decorators/column/isRequiredStringColumn.decorator';
+import { File } from './file.entity';
+import { Role } from './role.entity';
 
 @Entity()
 export class User {
@@ -52,10 +52,10 @@ export class User {
   public zipCode: string;
 
   @CreateDateColumn()
-  public createdAt: Date;
+  public createdAt: string;
 
   @UpdateDateColumn()
-  public updatedAt: Date;
+  public updatedAt: string;
 
   @IsOptionalStringColumn({ type: 'boolean', default: false })
   public emailVerified: boolean;

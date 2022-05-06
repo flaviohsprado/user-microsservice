@@ -9,7 +9,7 @@ import { createHash } from './../../utils/hash.utils';
 
 export class CreateUserDto extends PartialType(User) implements UserBody {
   @IsOptionalString()
-  public id: string;
+  public id?: string;
 
   @IsOptionalString()
   public username: string;
@@ -21,35 +21,36 @@ export class CreateUserDto extends PartialType(User) implements UserBody {
   public email: string;
 
   @IsOptionalString()
-  public dateOfBirth: string;
+  public dateOfBirth?: string;
 
   @IsPhoneNumberCustom('BR')
-  public phoneNumber: string;
+  public phoneNumber?: string;
 
   @IsOptionalString()
-  public address: string;
+  public address?: string;
 
   @IsOptionalString()
-  public neighborhood: string;
+  public neighborhood?: string;
 
   @IsOptionalString()
-  public city: string;
+  public city?: string;
 
   @IsOptionalString()
-  public state: string;
+  public state?: string;
 
   @IsOptionalString()
-  public country: string;
+  public country?: string;
 
   @IsOptionalString()
-  public zipCode: string;
+  public zipCode?: string;
 
   @IsOptionalString()
-  public roleId: string;
+  public roleId?: string;
 
-  constructor(user: UserBody) {
+  constructor(props: CreateUserDto, id?: string) {
     super();
-    Object.assign(this, user, { id: uuid() });
+    Object.assign(this, props);
+    this.id = id || uuid();
   }
 
   public async encryptPassword?(): Promise<CreateUserDto> {

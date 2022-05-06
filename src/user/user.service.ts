@@ -1,13 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import StandardGrpcError from 'src/utils/grpcError.utils';
 import { Repository } from 'typeorm';
 import StandardError from '../utils/error.utils';
-import { OwnerType } from './../enums/ownerType.enum';
 import { CreateUserDto } from './dto/createUser.dto';
 import { FileDto } from './dto/file.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { User } from './entities/user.entity';
+import {
+  CreateResponse,
+  DeleteResponse,
+  FindAllResponse,
+  FindOneResponse,
+  UpdateResponse,
+} from './proto/user.pb';
 
 @Injectable()
 export class UserService {
@@ -18,7 +25,7 @@ export class UserService {
     private readonly jwtService: JwtService,
   ) {}
 
-  public async findOne(id: string): Promise<User> {
+  public async findOne(id: string): Promise<FindOneResponse> {
     const user = await this.repository.findOne({
       where: { id },
       relations: ['role', 'file'],
@@ -30,13 +37,23 @@ export class UserService {
       role: user.role ? user.role.permissions : '',
     });
 
-    return user;
+    return {
+      status: HttpStatus.OK,
+      message: 'User found successfully',
+      data: user,
+    };
   }
 
-  public async findAll(): Promise<User[]> {
-    return this.repository.find({
+  public async findAll(): Promise<FindAllResponse> {
+    const users = await this.repository.find({
       relations: ['role', 'file'],
     });
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Users found successfully',
+      data: users,
+    };
   }
 
   public async findByKey(key: string, value: string): Promise<User> {
@@ -50,7 +67,11 @@ export class UserService {
     return user;
   }
 
-  public async create(user: CreateUserDto, file: FileDto): Promise<User> {
+  public async create(
+    user: CreateUserDto,
+    file: FileDto,
+  ): Promise<CreateResponse> {
+    console.log('init');
     await this.alreadyExists('email', user.email);
 
     /*if (file)
@@ -59,6 +80,7 @@ export class UserService {
         user.id,
         OwnerType.USER,
       );*/
+    console.log('passed email');
 
     const createdUser = await this.repository.save(user);
 
@@ -68,14 +90,18 @@ export class UserService {
       role: user.role ? user.role.permissions : '',
     });
 
-    return createdUser;
+    return {
+      status: HttpStatus.CREATED,
+      message: 'User created successfully',
+      data: createdUser,
+    };
   }
 
   public async update(
     id: string,
     user: UpdateUserDto,
     file: FileDto,
-  ): Promise<User> {
+  ): Promise<UpdateResponse> {
     await this.alreadyExists('email', user.email, id);
 
     /*if (file)
@@ -94,9 +120,14 @@ export class UserService {
     await this.repository.update(id, { [key]: value });
   }
 
-  public async destroy(id: string) {
+  public async destroy(id: string): Promise<DeleteResponse> {
     //await this.fileRepository.destroy(id);
     await this.repository.delete(id);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'User deleted successfully',
+    };
   }
 
   private async alreadyExists(
@@ -109,7 +140,7 @@ export class UserService {
     });
 
     if (alreadyExists && alreadyExists.id !== id) {
-      throw new StandardError(409, `${key} already exists`);
+      throw new StandardGrpcError(409, `${key} already exists`);
     }
   }
 }

@@ -3,7 +3,6 @@ import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
 import * as Long from 'long';
 import * as _m0 from 'protobufjs/minimal';
 import { Observable } from 'rxjs';
-import { Timestamp } from './google/protobuf/timestamp.pb';
 
 export const protobufPackage = 'user';
 
@@ -20,16 +19,67 @@ export interface User {
   state: string;
   country: string;
   zipCode: string;
-  createdAt: Timestamp | undefined;
-  updatedAt: Timestamp | undefined;
+  createdAt: string;
+  updatedAt: string;
   emailVerified: boolean;
   phoneVerified: boolean;
   accessToken: string;
-  file: File | undefined;
-  role: Role | undefined;
+  file?: File | undefined;
+  fileId?: string | undefined;
+  role?: Role | undefined;
+  roleId?: string | undefined;
 }
 
 export interface UserBody {
+  username: string;
+  password: string;
+  email: string;
+  dateOfBirth?: string | undefined;
+  phoneNumber?: string | undefined;
+  address?: string | undefined;
+  neighborhood?: string | undefined;
+  city?: string | undefined;
+  state?: string | undefined;
+  country?: string | undefined;
+  zipCode?: string | undefined;
+  roleId?: string | undefined;
+}
+
+export interface File {
+  id: string;
+  originalName?: string | undefined;
+  ownerId: string;
+  ownerType: string;
+  key: string;
+  url: string;
+  data?: Uint8Array | undefined;
+}
+
+export interface Role {
+  id: string;
+  name: string;
+  permissions: string;
+}
+
+export interface FindOneRequest {
+  id: string;
+}
+
+export interface FindOneResponse {
+  status: number;
+  message: string;
+  data: User | undefined;
+}
+
+export interface FindAllRequest {}
+
+export interface FindAllResponse {
+  status: number;
+  message: string;
+  data: User[];
+}
+
+export interface CreateRequest {
   username: string;
   password: string;
   email: string;
@@ -44,65 +94,21 @@ export interface UserBody {
   roleId: string;
 }
 
-export interface File {
-  id: string;
-  originalName: string;
-  ownerId: string;
-  ownerType: string;
-  key: string;
-  url: string;
-  data: number | undefined;
-}
-
-export interface FileBody {
-  id: string;
-  ownerId: string;
-  ownerType: string;
-  fieldname: string;
-  originalName: string;
-  encoding: string;
-  mimetype: string;
-  buffer: number | undefined;
-  key: string;
-  url: string;
-}
-
-export interface Role {
-  id: string;
-  name: string;
-  permissions: string;
-}
-
-export interface FindOneRequest {
-  id: string;
-}
-
-export interface FindOneResponse {
-  user: User | undefined;
-}
-
-export interface FindAllRequest {}
-
-export interface FindAllResponse {
-  user: User[];
-}
-
-export interface CreateRequest {
-  user: UserBody | undefined;
-  file: FileBody | undefined;
-}
-
 export interface CreateResponse {
-  user: User | undefined;
+  status: number;
+  message: string;
+  data: User | undefined;
 }
 
 export interface UpdateRequest {
+  id: string;
   user: UserBody | undefined;
-  file: FileBody | undefined;
 }
 
 export interface UpdateResponse {
-  user: User | undefined;
+  status: number;
+  message: string;
+  data: User | undefined;
 }
 
 export interface DeleteRequest {
@@ -110,7 +116,8 @@ export interface DeleteRequest {
 }
 
 export interface DeleteResponse {
-  success: boolean;
+  status: number;
+  message: string;
 }
 
 export const USER_PACKAGE_NAME = 'user';

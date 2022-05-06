@@ -1,13 +1,13 @@
-import { PartialType } from '@nestjs/swagger';
-import { File } from '../entities/file.entity';
-import { Role } from '../entities/role.entity';
-import { User } from '../entities/user.entity';
-import { IsRequiredString } from './../../commons/decorators/validation/isRequiredString.decorator';
+import { CreateUserDto } from './createUser.dto';
 
-export class UpdateUserDto extends PartialType(User) {
-  @IsRequiredString()
-  public id: string;
+export class UpdateUserDto extends CreateUserDto {
+  constructor(props: UpdateUserDto, id: string) {
+    super(props, id);
 
-  public file?: File;
-  public role?: Role;
+    Object.assign(this, props);
+
+    if (this.password) this.encryptPassword();
+
+    this.id = id;
+  }
 }

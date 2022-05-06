@@ -41,9 +41,6 @@ export class UserController {
   //@UseInterceptors(FileInterceptor('file'))
   private async update(payload: UpdateRequest): Promise<UpdateResponse> {
     const user: UpdateUserDto = new UpdateUserDto(payload.user, payload.id);
-
-    console.log('user: ', user);
-
     return await this.service.update(payload.id, user, undefined);
   }
 

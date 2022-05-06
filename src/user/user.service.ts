@@ -71,7 +71,6 @@ export class UserService {
     user: CreateUserDto,
     file: FileDto,
   ): Promise<CreateResponse> {
-    console.log('init');
     await this.alreadyExists('email', user.email);
 
     /*if (file)
@@ -80,7 +79,6 @@ export class UserService {
         user.id,
         OwnerType.USER,
       );*/
-    console.log('passed email');
 
     const createdUser = await this.repository.save(user);
 
